@@ -17,6 +17,7 @@ class BaiduSearch(object):
             'wd': wd,
             'pn': (page - 1) * 10,
         }
+        items = []
         r = requests.get(self.url, params=params, headers=headers, timeout=5000)
         soup = BeautifulSoup(r.content, 'lxml')
         results = soup.select('.c-container')
@@ -41,4 +42,5 @@ class BaiduSearch(object):
                 item.real_url = requests.head(item.baidu_url).headers['Location']
             except:
                 pass
-            print(item)
+            items.append(item)
+        return items
