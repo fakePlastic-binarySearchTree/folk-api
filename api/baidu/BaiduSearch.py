@@ -42,7 +42,3 @@ class BaiduSearch(object):
             except:
                 pass
             print(item)
-
-
-baidu = BaiduSearch()
-baidu.search('麦肯锡 一诺', page=2)
