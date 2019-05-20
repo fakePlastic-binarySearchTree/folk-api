@@ -22,7 +22,7 @@ class BaiduSearch(object):
         soup = BeautifulSoup(r.content, 'lxml')
         results = soup.select('.c-container')
         for result in results:
-            title_dom = result.select('h3>a')[0]
+            title_dom = result.select('h3 > a')[0]
             abstract_dom = result.select('.c-abstract')
             if len(abstract_dom) == 0:
                 abstract_dom = result.select('.c-span-last')
