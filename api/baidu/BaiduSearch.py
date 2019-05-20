@@ -40,6 +40,7 @@ class BaiduSearch(object):
             item.baidu_url = title_dom['href']
             try:
                 item.real_url = requests.head(item.baidu_url).headers['Location']
+                item.hosts = re.findall(r'http[s]{0,1}://(.*?)[/|$]', item.real_url)[0]
             except:
                 pass
             items.append(item)

@@ -5,6 +5,7 @@ class SearchResultItem(object):
     abstract: str
     baidu_url: str
     real_url: str
+    hosts: str
     imgs: list
     datetime: datetime
 
