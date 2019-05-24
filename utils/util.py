@@ -4,6 +4,11 @@ import re
 
 
 def extract_datetime(s: str):
+    try:
+        return datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
+    except:
+        pass
+
     # x小时前
     result = re.findall(r'(\d+)小时前', s)
     if len(result) > 0:
