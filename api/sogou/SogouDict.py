@@ -33,6 +33,7 @@ class SogouDict(object):
     def get_by_category_id(self, category_id: int, page: int = 1):
         """
         获取类目id下的详情
+        其中sub_categorys只获取二级类目，三级就不要了。毕竟二级就可以搞到所有数据了。
         :param category_id: 类目id
         :param page: 页数
         :return: CategoryPageInfo
@@ -46,28 +47,36 @@ class SogouDict(object):
         def get_sub_categorys(soup):
             sub_categorys = []
             first_category_id = int(re.findall(r'index/(\d+)', soup.select('#dict_nav_list .cur_nav a')[0]['href'])[0])
-            cate_td_list = soup.select('.cate_words_list td')
 
             def extract_category(category_dom):
                 category = CategoryInfo()
-                category_dom.select('span')[0].clear()
+                map(lambda span: span.clear(), category_dom.select('span'))
                 category.name = category_dom.get_text()
                 category.url = self.host + category_dom['href']
                 category.category_id = int(re.findall(r'index/(\d+)', category.url)[0])
                 return category
 
-            for td in cate_td_list:
-                category = extract_category(td.select('div a')[0])
-                category.parent_category_id = first_category_id
-                sub_categorys.append(category)
-
-                cate_children_show = td.select('.cate_children_show')
+            def extract_sub_categorys(sub_category_dom, parent_id):
+                sc = []
+                cate_children_show = sub_category_dom.select('.cate_children_show')
                 if len(cate_children_show) > 0:
                     doms = cate_children_show[0].select('td .cate_child_name a')
                     for dom in doms:
                         sub_category = extract_category(dom)
-                        sub_category.parent_category_id = category.category_id
-                        sub_categorys.append(sub_category)
+                        sub_category.parent_category_id = parent_id
+                        sc.append(sub_category)
+                return sc
+
+            if len(soup.select('#select_city_list')) > 0:
+                sub_category_dom = soup.select('#select_city_list')[0].parent
+                sub_categorys.extend(extract_sub_categorys(sub_category_dom, first_category_id))
+            else:
+                cate_td_list = soup.select('.cate_words_list td')
+
+                for td in cate_td_list:
+                    category = extract_category(td.select('div a')[0])
+                    category.parent_category_id = first_category_id
+                    sub_categorys.append(category)
 
             return sub_categorys
 
