@@ -17,12 +17,17 @@ def extract_datetime(s: str):
         fmt = '%Y-%m-%d %H'
         return datetime.strptime(dt.strftime(fmt), fmt)
 
-    result = re.findall(r'(\d+)-(\d+)', s)
+    result = re.findall(r'(\d{4})-(\d{1,2})', s)
+    if len(result) > 0:
+        year, mon = result[0]
+        return datetime.strptime(f'{year}-{mon}', '%Y-%m')
+
+    result = re.findall(r'(\d{1,2})-(\d{1,2})', s)
     if len(result) > 0:
         mon, day = result[0]
         return datetime.strptime(f'{mon}-{day}', '%m-%d')
 
-    result = re.findall(r'(\d+)-(\d+)-(\d+)', s)
+    result = re.findall(r'(\d{2,4})-(\d+)-(\d+)', s)
     if len(result) > 0:
         year, mon, day = result[0]
         return datetime.strptime(f'{year}-{mon}-{day}', '%Y-%m-%d')
@@ -31,5 +36,10 @@ def extract_datetime(s: str):
     if len(result) > 0:
         year, mon, day = result[0]
         return datetime.strptime(f'{year}-{mon}-{day}', '%Y-%m-%d')
+
+    result = re.findall(r'(\d{4})', s)
+    if len(result) > 0:
+        year = result[0]
+        return datetime.strptime(f'{year}', '%Y')
 
     return None
