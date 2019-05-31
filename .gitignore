@@ -3,3 +3,5 @@
 **/__pycache__
 
 app/get_all_sogou_dict/sogou_dict_scel.zip
+app/get_all_douban_books/*.txt
+app/get_all_douban_books/*.csv
