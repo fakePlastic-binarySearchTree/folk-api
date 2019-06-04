@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-from api.douban.objects import Book, BookListResp
+from api.douban.objects import Book, BookListResp, SortType
 from utils.util import extract_datetime
 from utils.exceptions import AntiSpiderException
 
@@ -31,7 +31,7 @@ class DoubanBook(object):
                 result.append((dom.get_text(), self.url + dom['href']))
         return result
 
-    def get_book_list(self, tag_name: str, page: int = 1):
+    def get_book_list(self, tag_name: str, page: int = 1, sort_type: SortType = SortType.Composite):
         """
         获取图书列表
         :param tag_name: 标签名
@@ -42,7 +42,7 @@ class DoubanBook(object):
         resp.book_list = []
         params = {
             'start': (page - 1) * 20,
-            'type': 'T'
+            'type': sort_type.value,
         }
         r = self._requests_get(f'{self.url}/tag/{tag_name}', params=params)
         # r = requests.get(f'{self.url}/tag/{tag_name}', params=params, headers=self.headers, timeout=self.timeout)
@@ -83,8 +83,12 @@ class DoubanBook(object):
             resp.book_list.append(book)
 
         try:
-            resp.total_page = int(soup.select('.paginator a')[-2].get_text())
-            resp.current_page = int(soup.select('.paginator .thispage')[0].get_text())
+            if len(soup.select('.paginator .next a')) == 0:
+                resp.total_page = int(soup.select('.paginator .thispage')[0].get_text())
+                resp.current_page = resp.total_page
+            else:
+                resp.total_page = int(soup.select('.paginator a')[-2].get_text())
+                resp.current_page = int(soup.select('.paginator .thispage')[0].get_text())
         except:
             resp.total_page = 1
             resp.current_page = 1
@@ -103,5 +107,7 @@ class DoubanBook(object):
             args['proxies'] = self.proxies
         r = requests.get(**args)
         if r.text.find('检测到有异常请求从你的 IP 发出') != -1:
-            raise AntiSpiderException
+            raise AntiSpiderException(f'AntiSpiderException content [{r.text}]')
+        if r.text.find('window.location.href') != -1 and r.text.find('sec.douban.com') != -1:
+            raise AntiSpiderException(f'AntiSpiderException content [{r.text}]')
         return r

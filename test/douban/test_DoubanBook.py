@@ -1,4 +1,5 @@
 from api.douban.DoubanBook import DoubanBook
+from api.douban.objects import SortType
 import requests
 import random
 
@@ -13,11 +14,14 @@ def get_proxy():
 
 
 if __name__ == '__main__':
-    proxies = get_proxy()
-    print(proxies)
-    # db = DoubanBook(proxies=proxies)
-    db = DoubanBook()
-    print(db.get_all_tags())
+    print(SortType.Composite.value)
+    # proxies = get_proxy()
+    # print(proxies)
+    db = DoubanBook(proxies={
+        'https': 'https://218.22.7.62:53281',
+    })
+    # db = DoubanBook()
+    # print(db.get_all_tags())
     resp = db.get_book_list('外国文学', page=35)
     for book in resp.book_list:
         print(book)

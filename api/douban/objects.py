@@ -1,4 +1,11 @@
 from datetime import datetime
+from enum import Enum
+
+
+class SortType(Enum):
+    Composite = 'T'
+    PubTime = 'R'
+    Score = 'S'
 
 
 class Book(object):

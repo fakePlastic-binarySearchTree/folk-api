@@ -1,17 +1,32 @@
 from api.douban.DoubanBook import DoubanBook
+from api.douban.objects import SortType
 from utils.exceptions import AntiSpiderException
 import os
 import requests
-from requests.exceptions import ProxyError, ConnectTimeout, ReadTimeout
+from requests.exceptions import ProxyError, ConnectTimeout, ReadTimeout, SSLError, ConnectionError
 import random
+import time
 
 
 def get_proxy():
-    r = requests.get('http://127.0.0.1:8000', params={
-        'protocol': 1,
-        'count': 10,
-    })
-    ip, port, score = random.choice(r.json())
+    while True:
+        try:
+            r = requests.get('http://127.0.0.1:8000', params={
+                'protocol': 1,
+                'count': 10,
+            })
+        except:
+            print('cannot reach 127.0.0.1:8000')
+            time.sleep(5)
+            continue
+
+        proxy_list = r.json()
+        if len(proxy_list) > 0:
+            break
+        else:
+            print('no proxy in the pool. just wait...')
+            time.sleep(5)
+    ip, port, score = random.choice(proxy_list)
     print(f'now get proxy {ip}:{port}')
     return {'https': f'https://{ip}:{port}'}
 
@@ -28,12 +43,14 @@ def db_get_book_list(db: DoubanBook, tag_name: str, page: int = 1):
         if not db.proxies:
             db.set_proxies(get_proxy())
         try:
-            return db.get_book_list(tag_name, page=page)
-        except (ProxyError, ConnectTimeout, ReadTimeout, AntiSpiderException):
+            return db.get_book_list(tag_name, page=page, sort_type=SortType.PubTime)
+        except (ProxyError, ConnectTimeout, ReadTimeout, AntiSpiderException, SSLError, ConnectionError) as e:
             retry -= 1
+            print(f'there is an exception. retry {retry}. except {e}')
             if retry == 0:
                 delete_proxy(db)
                 db.set_proxies(get_proxy())
+                retry = 3
 
 
 def db_get_all_tags(db: DoubanBook):
@@ -43,11 +60,13 @@ def db_get_all_tags(db: DoubanBook):
             db.set_proxies(get_proxy())
         try:
             return db.get_all_tags()
-        except (ProxyError, ConnectTimeout, ReadTimeout, AntiSpiderException):
+        except (ProxyError, ConnectTimeout, ReadTimeout, AntiSpiderException, SSLError, ConnectionError) as e:
             retry -= 1
+            print(f'there is an exception. retry {retry}. except {e}')
             if retry == 0:
                 delete_proxy(db)
                 db.set_proxies(get_proxy())
+                retry = 3
 
 
 def get_all_books_by_tag(db: DoubanBook, tag_name: str, file_handler):
