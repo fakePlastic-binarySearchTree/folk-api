@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 
-class SortType(Enum):
+class BookSortType(Enum):
     Composite = 'T'
     PubTime = 'R'
     Score = 'S'

@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-from api.douban.objects import Book, BookListResp, SortType
+from api.douban.objects import Book, BookListResp, BookSortType
 from utils.util import extract_datetime
 from utils.exceptions import AntiSpiderException
 
@@ -31,11 +31,12 @@ class DoubanBook(object):
                 result.append((dom.get_text(), self.url + dom['href']))
         return result
 
-    def get_book_list(self, tag_name: str, page: int = 1, sort_type: SortType = SortType.Composite):
+    def get_book_list(self, tag_name: str, page: int = 1, sort_type: BookSortType = BookSortType.Composite):
         """
         获取图书列表
         :param tag_name: 标签名
         :param page: 页码
+        :param sort_type: 排序规则
         :return: BookListResp
         """
         resp = BookListResp()

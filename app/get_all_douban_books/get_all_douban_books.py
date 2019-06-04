@@ -1,5 +1,5 @@
 from api.douban.DoubanBook import DoubanBook
-from api.douban.objects import SortType
+from api.douban.objects import BookSortType
 from utils.exceptions import AntiSpiderException
 import os
 import requests
@@ -43,7 +43,7 @@ def db_get_book_list(db: DoubanBook, tag_name: str, page: int = 1):
         if not db.proxies:
             db.set_proxies(get_proxy())
         try:
-            return db.get_book_list(tag_name, page=page, sort_type=SortType.PubTime)
+            return db.get_book_list(tag_name, page=page, sort_type=BookSortType.PubTime)
         except (ProxyError, ConnectTimeout, ReadTimeout, AntiSpiderException, SSLError, ConnectionError) as e:
             retry -= 1
             print(f'there is an exception. retry {retry}. except {e}')
