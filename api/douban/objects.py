@@ -33,3 +33,23 @@ class BookListResp(object):
 
     def __str__(self):
         return str(vars(self))
+
+
+class MovieSortType(Enum):
+    Hot = 'U'  # 近期热门
+    Mark = 'T'  # 标记最多
+    Rank = 'S'  # 评分最高
+    Latest = 'R'  # 最新上映
+
+
+class Movie(object):
+    directors: list
+    rate: float
+    title: str
+    url: str
+    casts: list
+    cover: str
+    id: str
+
+    def __str__(self):
+        return str(vars(self))

@@ -5,3 +5,5 @@
 app/get_all_sogou_dict/sogou_dict_scel.zip
 app/get_all_douban_books/*.txt
 app/get_all_douban_books/*.csv
+app/get_all_douban_movies/*.txt
+app/get_all_douban_movies/*.csv

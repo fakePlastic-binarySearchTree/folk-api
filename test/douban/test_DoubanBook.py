@@ -1,5 +1,5 @@
 from api.douban.DoubanBook import DoubanBook
-from api.douban.objects import SortType
+from api.douban.objects import BookSortType
 import requests
 import random
 
@@ -14,7 +14,7 @@ def get_proxy():
 
 
 if __name__ == '__main__':
-    print(SortType.Composite.value)
+    print(BookSortType.Composite.value)
     # proxies = get_proxy()
     # print(proxies)
     db = DoubanBook(proxies={
