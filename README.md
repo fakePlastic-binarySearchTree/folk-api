@@ -9,7 +9,7 @@ Unofficial API that based on spider.
     - SogouDict // 搜狗输入法的词典
 - douban
     - DoubanBook // 豆瓣图书
-    - DoubanMovie // 豆瓣丹樱
+    - DoubanMovie // 豆瓣电影
     
     
 ## 其他
