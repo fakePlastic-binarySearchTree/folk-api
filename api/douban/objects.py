@@ -21,6 +21,10 @@ class Book(object):
     description: str = ''
     title_page_img: str = ''
     detail_url: str = ''
+    ISBN: str = ''
+    page_num: int = 0
+    origin_title: str = ''  # 原作名
+    book_id: str = ''  # 在url中跟在subject后面的那串
 
     def __str__(self):
         return str(vars(self))
@@ -30,6 +34,14 @@ class BookListResp(object):
     book_list: list
     current_page: int
     total_page: int
+
+    def __str__(self):
+        return str(vars(self))
+
+
+class BookDetailResp(object):
+    book: Book
+    related_books: list
 
     def __str__(self):
         return str(vars(self))

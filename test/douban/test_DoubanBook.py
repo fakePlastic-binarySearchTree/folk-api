@@ -14,15 +14,16 @@ def get_proxy():
 
 
 if __name__ == '__main__':
-    print(BookSortType.Composite.value)
+    # print(BookSortType.Composite.value)
     # proxies = get_proxy()
     # print(proxies)
-    db = DoubanBook(proxies={
-        'https': 'https://218.22.7.62:53281',
-    })
+    db = DoubanBook()
     # db = DoubanBook()
     # print(db.get_all_tags())
-    resp = db.get_book_list('外国文学', page=35)
-    for book in resp.book_list:
-        print(book)
-    print(resp.current_page, resp.total_page)
+    # resp = db.get_book_list('外国文学', page=35)
+    # for book in resp.book_list:
+    #     print(book)
+    # print(resp.current_page, resp.total_page)
+
+    resp = db.get_book_detail('1008145')
+    print(resp)

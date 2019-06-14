@@ -9,6 +9,7 @@ Unofficial API that based on spider.
     - SogouDict // 搜狗输入法的词典
 - douban
     - DoubanBook // 豆瓣图书
+        - 惊讶地发现有些图书在没有登录态的时候返回“页面不存在”。嗯。
     - DoubanMovie // 豆瓣电影
     
     
