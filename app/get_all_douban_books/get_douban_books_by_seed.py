@@ -8,10 +8,10 @@ import os
 from queue import Queue
 
 from requests.exceptions import ProxyError, ConnectTimeout, ReadTimeout, SSLError, ConnectionError
-from utils.exceptions import AntiSpiderException
+from utils.exceptions import AntiSpiderException, ForbiddenException
 
 
-exception_cause_by_proxy = [ProxyError, ConnectTimeout, ReadTimeout, SSLError, ConnectionError, AntiSpiderException]
+exception_cause_by_proxy = [ProxyError, ConnectTimeout, ReadTimeout, SSLError, ConnectionError, AntiSpiderException, ForbiddenException]
 
 
 def run_one(detail_set: set,  # 已经拉过detail的集合

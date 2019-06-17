@@ -4,7 +4,7 @@ import re
 
 from api.douban.objects import Book, BookListResp, BookSortType, BookDetailResp
 from utils.util import extract_datetime
-from utils.exceptions import AntiSpiderException, NotExistsException
+from utils.exceptions import AntiSpiderException, NotExistsException, ForbiddenException
 
 
 class DoubanBook(object):
@@ -206,4 +206,6 @@ class DoubanBook(object):
             raise AntiSpiderException(f'AntiSpiderException content [{r.text}]')
         if r.text.find('<title>页面不存在</title>') != -1:
             raise NotExistsException(f'页面不存在. url:{r.url}')
+        if r.text.find('<title>403 Forbidden</title>') != -1:
+            raise ForbiddenException('403 Forbidden')
         return r
