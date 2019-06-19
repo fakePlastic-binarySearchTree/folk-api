@@ -8,14 +8,23 @@ class ProxyHelper(object):
         self.set_proxy_func = set_proxy_func
         self.get_proxy_func = get_proxy_func
         self.exception_cause_by_proxy = []  # 判定proxy为无效的异常
+        self.exception_do_not_retry = []
 
     def add_exception_cause_by_proxy(self, exception):
         """
         由proxy导致的异常类
         :param exception: 异常类
-        :return:
+        :return: None
         """
         self.exception_cause_by_proxy.append(exception)
+
+    def add_exception_do_not_retry(self, exception):
+        """
+        不需要重试的exception
+        :param exception: 异常类
+        :return: None
+        """
+        self.exception_do_not_retry.append(exception)
 
     def run(self, func, *args, **kwargs):
         retry = 10
@@ -27,6 +36,12 @@ class ProxyHelper(object):
             except Exception as e:
                 retry -= 1
                 print(f'there is an exception. retry {retry}. except {e}')
+                if self._exception_do_not_retry(e):
+                    print(f'this exception {type(e)} shall not retry. just skip. {e}')
+                    if self._exception_cause_by_proxy(e):
+                        self._delete_proxy(self.get_proxy_func())
+                        self.set_proxy_func(self._get_proxy())
+                    return e
                 if retry == 0:
                     if self._exception_cause_by_proxy(e):
                         self._delete_proxy(self.get_proxy_func())
@@ -34,10 +49,16 @@ class ProxyHelper(object):
                         retry = 10
                     else:
                         print(f'this exception {type(e)} is not cause by proxy. just skip. {e}')
-                        return None
+                        return e
 
     def _exception_cause_by_proxy(self, exception):
         for exception_type in self.exception_cause_by_proxy:
+            if isinstance(exception, exception_type):
+                return True
+        return False
+
+    def _exception_do_not_retry(self, exception):
+        for exception_type in self.exception_do_not_retry:
             if isinstance(exception, exception_type):
                 return True
         return False
