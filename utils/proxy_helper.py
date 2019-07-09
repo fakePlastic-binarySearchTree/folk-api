@@ -9,6 +9,7 @@ class ProxyHelper(object):
         self.get_proxy_func = get_proxy_func
         self.exception_cause_by_proxy = []  # 判定proxy为无效的异常
         self.exception_do_not_retry = []
+        self.ip_black_list = set(['185.62.190.60'])
 
     def add_exception_cause_by_proxy(self, exception):
         """
@@ -69,17 +70,19 @@ class ProxyHelper(object):
                 r = requests.get('http://127.0.0.1:8000', params={
                     'count': 10,
                 })
-            except:
-                print('cannot reach 127.0.0.1:8000')
+            except Exception as e:
+                print(f'cannot reach 127.0.0.1:8000. {e}, just wait...')
                 time.sleep(5)
                 continue
 
             proxy_list = r.json()
+            proxy_list = list(filter(lambda item: item[0] not in self.ip_black_list, proxy_list))
             if len(proxy_list) > 0:
                 break
             else:
                 print('no proxy in the pool. just wait...')
                 time.sleep(5)
+
         ip, port, score = random.choice(proxy_list)
         print(f'now get proxy {ip}:{port}')
         return {'https': f'https://{ip}:{port}'}
