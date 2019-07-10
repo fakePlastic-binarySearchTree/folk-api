@@ -18,7 +18,7 @@ def run_one(keyword: str, output_dir: str):
     filepath = os.path.join(output_dir, f'{keyword}.html')
     if os.path.exists(filepath):
         print(f'{filepath} has already exists. skip')
-        return True
+        return 'skip'
 
     jd = JDSearch()
     ph = ProxyHelper(jd.set_proxies, jd.get_proxies)
@@ -31,6 +31,7 @@ def run_one(keyword: str, output_dir: str):
     content = jd.search(keyword)
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
+    return 'ok'
 
 
 def run(input_file: str, output_dir: str):
@@ -59,8 +60,18 @@ def run_single_process(input_file: str, output_dir: str):
             keyword = line.strip()
             if len(keyword) == 0:
                 continue
-            run_one(keyword, output_dir)
-            sleep_sec = random.random() * random.randint(10, 20)
+            retry = 5
+            while retry > 0:
+                try:
+                    result = run_one(keyword, output_dir)
+                    break
+                except Exception as e:
+                    print(f'run one {keyword} fail. retry {retry}. except {e}')
+                    retry -= 1
+            if result == 'skip':
+                continue
+
+            sleep_sec = random.random() * random.randint(5, 10)
             print(f'get {keyword} done. sleep {sleep_sec}s')
             time.sleep(sleep_sec)
 
