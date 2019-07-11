@@ -48,7 +48,7 @@ class ApiBase(object):
         else:
             return self.headers.get('Referer', None)
 
-    def _request_get(self, url, params=None, session=None):
+    def _requests_get(self, url, params=None, session=None):
         args = {'url': url}
         if params:
             args['params'] = params

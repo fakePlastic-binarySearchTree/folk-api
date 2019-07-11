@@ -51,19 +51,3 @@ class JDSearch(ApiBase):
         }
         r = self._request_get(url, params=params)
         return r.text[2:-1]
-
-    def _request_get(self, url, params=None, session=None):
-        args = {'url': url}
-        if params:
-            args['params'] = params
-        if self.proxies:
-            args['proxies'] = self.proxies
-        if self.headers:
-            args['headers'] = self.headers
-        if self.timeout:
-            args['timeout'] = self.timeout
-        if session:
-            r = session.get(**args)
-        else:
-            r = requests.get(**args)
-        return r

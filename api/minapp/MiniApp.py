@@ -19,5 +19,5 @@ class MiniApp(ApiBase):
         if tag is not None:
             params['tag'] = tag
 
-        r = self._request_get(url, params=params)
+        r = self._requests_get(url, params=params)
         return r.json()
