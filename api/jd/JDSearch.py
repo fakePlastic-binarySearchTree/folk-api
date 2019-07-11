@@ -49,5 +49,5 @@ class JDSearch(ApiBase):
             'curr_url': 'www.jd.com/',
             'callback': 'f'
         }
-        r = self._request_get(url, params=params)
+        r = self._requests_get(url, params=params)
         return r.text[2:-1]
