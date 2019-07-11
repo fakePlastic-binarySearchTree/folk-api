@@ -36,6 +36,18 @@ class ApiBase(object):
         else:
             return self.headers.get('User-Agent', None)
 
+    def set_referer(self, referer: str):
+        if self.headers is None:
+            self.headers = {'Referer': referer}
+        else:
+            self.headers['Referer'] = referer
+
+    def get_referer(self):
+        if self.headers is None:
+            return None
+        else:
+            return self.headers.get('Referer', None)
+
     def _request_get(self, url, params=None, session=None):
         args = {'url': url}
         if params:

@@ -1,22 +1,19 @@
+from utils.ApiBase import ApiBase
+
+import time
 import requests
 from bs4 import BeautifulSoup
 import re
 
 
-class JDSearch(object):
+class JDSearch(ApiBase):
     def __init__(self, proxies=None):
         self.url = 'https://search.jd.com/Search'
         self.url_even = 'https://search.jd.com/s_new.php'
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'}
-        self.timeout = 5000
-        self.proxies = proxies
-
-    def set_proxies(self, proxies):
-        self.proxies = proxies
-
-    def get_proxies(self):
-        return self.proxies
+        self.set_proxies(proxies)
+        self.set_timeout(5000)
+        self.set_user_agent('Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36')
+        self.set_referer('https://www.jd.com/')
 
     def search(self, keyword: str, page: int = 1):
         """
@@ -40,18 +37,17 @@ class JDSearch(object):
 
         return r.content.decode('utf-8')
 
-    def _requests_get(self, url, params=None, session=None):
-        args = {
-            'url': url,
-            'headers': self.headers,
-            'timeout': self.timeout,
+    def get_suggestion(self, keyword: str):
+        url = 'https://dd-search.jd.com/'
+        params = {
+            'terminal': 'pc',
+            'newjson': 1,
+            'ver': 2,
+            'zip': 1,
+            'key': keyword,
+            't': int(time.time() * 1e3),
+            'curr_url': 'www.jd.com/',
+            'callback': 'f'
         }
-        if params:
-            args['params'] = params
-        if self.proxies:
-            args['proxies'] = self.proxies
-        if session:
-            r = session.get(**args)
-        else:
-            r = requests.get(**args)
-        return r
+        r = self._request_get(url, params=params)
+        return r.text[2:-1]

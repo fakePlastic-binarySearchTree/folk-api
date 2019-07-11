@@ -1,4 +1,5 @@
 import os
+import json
 
 from api.jd.JDSearch import JDSearch
 from utils.proxy_helper import ProxyHelper
@@ -30,5 +31,13 @@ def run_one(keyword: str, output_dir: str):
         f.write(content)
 
 
+def run_suggestion(keyword: str):
+    jd = JDSearch()
+    suggestion = jd.get_suggestion(keyword)
+    print(suggestion)
+    print(json.loads(suggestion))
+
+
 if __name__ == '__main__':
-    run_one('米线', 'D:/test_jd')
+    # run_one('河粉', 'D:/test_jd')
+    run_suggestion('河粉')
